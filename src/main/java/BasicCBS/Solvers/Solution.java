@@ -86,6 +86,16 @@ public class Solution implements Iterable<SingleAgentPlan>{
         return SOC;
     }
 
+    public int costFunction(){
+        return makespan();
+        //return sumIndividualCosts();
+    }
+
+    public String costFunctionName(){
+        return "makespan";
+        //return "SOC";
+    }
+
     public int makespan(){
         int maxCost = 0;
         for (SingleAgentPlan plan :

@@ -94,7 +94,7 @@ public class CBS_Solver extends A_Solver {
         this.openListManagementMode = openListManagementMode != null ? openListManagementMode : OpenListManagementMode.AUTOMATIC;
         clearOPEN();
         // if a specific cost function is not provided, use standard SOC (Sum of Individual Costs)
-        this.costFunction = costFunction != null ? costFunction : (solution, cbs) -> solution.sumIndividualCosts();
+        this.costFunction = costFunction != null ? costFunction : (solution, cbs) -> solution.costFunction();//solution.sumIndividualCosts();
         this.CBSNodeComparator = cbsNodeComparator != null ? cbsNodeComparator : Comparator.comparing(CBS_Node::getSolutionCost);
     }
 
@@ -364,8 +364,8 @@ public class CBS_Solver extends A_Solver {
         super.instanceReport.putIntegerValue(InstanceReport.StandardFields.generatedNodes, this.generatedNodes);
         super.instanceReport.putIntegerValue(InstanceReport.StandardFields.expandedNodes, this.expandedNodes);
         if(solution != null){
-            super.instanceReport.putStringValue(InstanceReport.StandardFields.solutionCostFunction, "SOC");
-            super.instanceReport.putIntegerValue(InstanceReport.StandardFields.solutionCost, solution.sumIndividualCosts());
+            super.instanceReport.putStringValue(InstanceReport.StandardFields.solutionCostFunction, solution.costFunctionName());//"SOC");
+            super.instanceReport.putIntegerValue(InstanceReport.StandardFields.solutionCost, solution.costFunction());//solution.sumIndividualCosts());
         }
     }
 

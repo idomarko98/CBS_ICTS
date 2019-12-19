@@ -225,8 +225,8 @@ public class PrioritisedPlanning_Solver extends A_Solver {
     protected void writeMetricsToReport(Solution solution) {
         super.writeMetricsToReport(solution);
         if(solution != null){
-            instanceReport.putIntegerValue(InstanceReport.StandardFields.solutionCost, solution.sumIndividualCosts());
-            instanceReport.putStringValue(InstanceReport.StandardFields.solutionCostFunction, "SOC");
+            instanceReport.putIntegerValue(InstanceReport.StandardFields.solutionCost, solution.costFunction());//solution.sumIndividualCosts());
+            instanceReport.putStringValue(InstanceReport.StandardFields.solutionCostFunction, solution.costFunctionName());
         }
     }
 
