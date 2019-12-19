@@ -1,4 +1,4 @@
-# CBS
+# CBS - implemented by Jonathan Morag
 * This is an implementation of the Conflict Based Search (CBS) algorithm, written in Java 11. 
 * This project aims to create a modular implementation, to facilitate the easier development of future CBS variants.
 
