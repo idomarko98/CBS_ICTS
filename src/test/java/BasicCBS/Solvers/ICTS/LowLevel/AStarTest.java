@@ -10,6 +10,7 @@ import BasicCBS.Instances.Maps.Coordinates.Coordinate_2D;
 import BasicCBS.Instances.Maps.Coordinates.I_Coordinate;
 import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
 import Environment.IO_Package.IO_Manager;
+import Environment.RunManagerSimpleExample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -111,7 +112,6 @@ public class AStarTest {
 
     @Test
     void TestDebug() {
-
         MAPF_Instance testInstance = instanceCircle1;
         DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
         aStar = new AStar(testInstance, heuristicICTS);
@@ -127,7 +127,18 @@ public class AStarTest {
 
     @Test
     void TestHardMap() {
-        MAPF_Instance testInstance = instanceCircle1;
+        /*  =   Set Path   =*/
+        String path = IO_Manager.buildPath( new String[]{   IO_Manager.resources_Directory,
+                "Instances\\\\BGU_Instances\\\\den520d-10-0"});
+        InstanceManager.InstancePath instancePath = new InstanceManager.InstancePath(path);
+
+
+        /*  =   Set Instance Manager   =  */
+        InstanceManager instanceManager = new InstanceManager(null, new InstanceBuilder_BGU());
+
+        MAPF_Instance instance = RunManagerSimpleExample.getInstanceFromPath(instanceManager, instancePath);
+
+        MAPF_Instance testInstance = instance.getSubproblemFor(instance.agents.get(0));
         DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
         aStar = new AStar(testInstance, heuristicICTS);
         I_Location start = testInstance.map.getMapCell(testInstance.agents.get(0).source);
