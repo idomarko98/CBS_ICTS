@@ -1,12 +1,7 @@
-package BasicCBS.Solvers.ICTS;
+package BasicCBS.Solvers.ICTS.HighLevel;
 
 import BasicCBS.Instances.MAPF_Instance;
 import BasicCBS.Solvers.*;
-import BasicCBS.Solvers.AStar.SingleAgentAStar_Solver;
-import BasicCBS.Solvers.CBS.CBS_Solver;
-
-import java.util.Comparator;
-import java.util.Objects;
 
 public class ICTS_Solver extends A_Solver {
 

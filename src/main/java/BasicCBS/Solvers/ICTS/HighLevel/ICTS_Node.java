@@ -1,6 +1,5 @@
-package BasicCBS.Solvers.ICTS;
+package BasicCBS.Solvers.ICTS.HighLevel;
 
-import BasicCBS.Solvers.AStar.SingleAgentAStar_Solver;
 import BasicCBS.Solvers.Solution;
 
 import java.util.List;
