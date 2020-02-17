@@ -110,7 +110,7 @@ public class AStarTest {
     }
 
     @Test
-    void oneMoveSolution() {
+    void TestDebug() {
 
         MAPF_Instance testInstance = instanceCircle1;
         DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
@@ -121,5 +121,22 @@ public class AStarTest {
         int breakPoint = 0;
         MDD nextSolution = aStar.continueSearching(depth + 1);
         breakPoint = 1;
+        MDD nextNextSolution = aStar.continueSearching(depth + 2);
+        breakPoint = 2;
+    }
+
+    @Test
+    void TestHardMap() {
+        MAPF_Instance testInstance = instanceCircle1;
+        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
+        aStar = new AStar(testInstance, heuristicICTS);
+        I_Location start = testInstance.map.getMapCell(testInstance.agents.get(0).source);
+        int depth = heuristicICTS.getDistanceDictionaries().get(testInstance.agents.get(0)).get(start);
+        MDD solution = aStar.continueSearching(depth);
+        int breakPoint = 0;
+        MDD nextSolution = aStar.continueSearching(depth + 1);
+        breakPoint = 1;
+        MDD nextNextSolution = aStar.continueSearching(depth + 2);
+        breakPoint = 2;
     }
 }

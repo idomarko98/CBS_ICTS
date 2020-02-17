@@ -15,7 +15,7 @@ public class AStar implements I_LowLevelSearcher{
      * Will contain everything in the open list, so we could modify them (add to their parents) while they are in the Priority Queue.
      */
     private Map<Node, Node> contentOfOpen;
-    private Set<Node> closeList;
+    private Map<Node, Node> closeList;
     private MAPF_Instance instance;
     private Agent agent;
     private DistanceTableAStarHeuristicICTS heuristic;
@@ -30,7 +30,7 @@ public class AStar implements I_LowLevelSearcher{
         this.instance = instance;
         openList = new PriorityQueue<>();
         contentOfOpen = new HashMap<>();
-        closeList = new HashSet<>();
+        closeList = new HashMap<>();
         agent = instance.agents.get(0); //only one agent in the instance
         this.heuristic = heuristic;
 
@@ -39,7 +39,6 @@ public class AStar implements I_LowLevelSearcher{
 
     private void initializeSearch() {
         Node start = new Node(agent, instance.map.getMapCell(agent.source), 0, heuristic);
-
         addToOpen(start);
     }
 
@@ -49,8 +48,12 @@ public class AStar implements I_LowLevelSearcher{
             Node inOpen = contentOfOpen.get(node);
             inOpen.addParents(node.getParents());
         }
+        else if(closeList.containsKey(node)){
+            Node inClosed = closeList.get(node);
+            inClosed.addParents(node.getParents());
+        }
         else{
-            openList.add(node); // TODO: 2/17/2020 check if it is already in closed and deal with it
+            openList.add(node);
             contentOfOpen.put(node, node);
         }
     }
@@ -61,6 +64,10 @@ public class AStar implements I_LowLevelSearcher{
         return next;
     }
 
+    private void addToClose(Node node) {
+        closeList.put(node, node);
+    }
+
     @Override
     public MDD continueSearching(int depthOfSolution) {
         Node goal = null;
@@ -68,7 +75,7 @@ public class AStar implements I_LowLevelSearcher{
             Node current = pollFromOpen();
             if(current.getF() > depthOfSolution)
             {
-                addToOpen(current); // TODO: 2/17/2020 check if this creates bugs
+                addToOpen(current);
                 break;
             }
             if(isGoalState(current)){
@@ -78,8 +85,12 @@ public class AStar implements I_LowLevelSearcher{
                         // Don't do continue here, because we want to add the sons of current to the open list for later
                     }
                     else{
-                        // TODO: 2/17/2020 we are not supposed to get here, if we check the closed set before entering to the open. check it.
-                        goal.addParents(current.getParents());
+                        //goal.addParents(current.getParents());
+                        try {
+                            throw new Exception("Should not enter here, because goal is already in closed list, so it already added the parents of the new solution to the goal");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 else{
@@ -105,6 +116,7 @@ public class AStar implements I_LowLevelSearcher{
             neighbor.addParent(node);
             addToOpen(neighbor);
         }
+        addToClose(node);
     }
 
     private boolean isGoalState(Node node) {
