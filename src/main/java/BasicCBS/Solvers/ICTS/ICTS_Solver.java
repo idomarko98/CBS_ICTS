@@ -56,6 +56,7 @@ public class ICTS_Solver extends A_Solver {
         return null; //probably a timeout
     }
 
+    //todo: complete
     private void expandNode(ICTS_Node node) {
         this.expandedNodes++;
 
