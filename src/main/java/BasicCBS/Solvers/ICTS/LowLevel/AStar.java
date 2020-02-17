@@ -55,11 +55,17 @@ public class AStar implements I_LowLevelSearcher{
         }
     }
 
+    private Node pollFromOpen(){
+        Node next = openList.poll();
+        contentOfOpen.remove(next);
+        return next;
+    }
+
     @Override
     public MDD continueSearching(int depthOfSolution) {
         Node goal = null;
         while(true){
-            Node current = openList.poll();
+            Node current = pollFromOpen();
             if(current.getF() > depthOfSolution)
             {
                 addToOpen(current); // TODO: 2/17/2020 check if this creates bugs
@@ -96,6 +102,7 @@ public class AStar implements I_LowLevelSearcher{
         for (I_Location location : neighborLocations) {
             // TODO: 2/17/2020 add 1 to generated nodes
             Node neighbor = new Node(agent, location, node.getG() + 1, heuristic);
+            neighbor.addParent(node);
             addToOpen(neighbor);
         }
     }

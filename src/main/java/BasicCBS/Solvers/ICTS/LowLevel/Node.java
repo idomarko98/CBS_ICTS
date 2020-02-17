@@ -88,4 +88,12 @@ public class Node implements Comparable<Node>{
         neighborCellsIncludingCurrent.add(currLocation); //staying in the same location is possible
         return neighborCellsIncludingCurrent;
     }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "location=" + location +
+                ", g=" + g +
+                '}';
+    }
 }
