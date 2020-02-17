@@ -1,7 +1,6 @@
 package BasicCBS.Solvers.ICTS.LowLevel;
 
-import BasicCBS.Instances.MAPF_Instance;
-import BasicCBS.Solvers.Solution;
+import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
 
 public interface I_LowLevelSearcher {
     /**
@@ -10,5 +9,5 @@ public interface I_LowLevelSearcher {
      * @param depthOfSolution - the depth of the wanted solutions
      * @return the goal state, which can easily be transferred to an MDD
      */
-    Node continueSearching(int depthOfSolution);
+    MDD continueSearching(int depthOfSolution);
 }

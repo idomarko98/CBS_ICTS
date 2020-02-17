@@ -3,6 +3,7 @@ package BasicCBS.Solvers.ICTS.LowLevel;
 import BasicCBS.Instances.Agent;
 import BasicCBS.Instances.Maps.I_Location;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -74,5 +75,17 @@ public class Node implements Comparable<Node>{
     @Override
     public int compareTo(Node node) {
         return Float.compare(this.getF(), node.getF());
+    }
+
+    public void addParents(List<Node> parents) {
+        this.parents.addAll(parents);
+    }
+
+    public List<I_Location> getNeighborLocations(){
+        // can move to neighboring cells or stay put
+        I_Location currLocation = this.location;
+        List<I_Location> neighborCellsIncludingCurrent = new ArrayList<>(currLocation.getNeighbors());
+        neighborCellsIncludingCurrent.add(currLocation); //staying in the same location is possible
+        return neighborCellsIncludingCurrent;
     }
 }

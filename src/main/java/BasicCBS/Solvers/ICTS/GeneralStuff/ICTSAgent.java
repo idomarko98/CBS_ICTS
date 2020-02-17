@@ -25,8 +25,7 @@ public class ICTSAgent extends Agent {
     public MDD getMDD(int depth){
         if(!mdds.containsKey(depth))
         {
-            Node goal = searcher.continueSearching(depth);
-            MDD curr = new MDD(goal);
+            MDD curr = searcher.continueSearching(depth);
             mdds.put(depth, curr);
         }
         return mdds.get(depth);
