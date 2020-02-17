@@ -18,18 +18,25 @@ public class AStar implements I_LowLevelSearcher{
     private Agent agent;
     private DistanceTableAStarHeuristicICTS heuristic;
 
+    /**
+     * Constructor for the AStar searcher
+     *
+     * @param instance - we assume that it is a "subproblem" used the function "getSubproblemFor" in "MAPF_Instance" class
+     * @param heuristic - the heuristics table that will enable us to get a more accurate heuristic
+     */
     public AStar(MAPF_Instance instance, DistanceTableAStarHeuristicICTS heuristic) {
         this.instance = instance;
         openList = new PriorityQueue<>();
         closeList = new HashSet<>();
         agent = instance.agents.get(0); //only one agent in the instance
+        this.heuristic = heuristic;
 
         initializeSearch();
     }
 
     private void initializeSearch() {
-        Node start = new Node(agent, instance.map.getMapCell(agent.source), 0);
-        start.setH(heuristic.getH(start));
+        Node start = new Node(agent, instance.map.getMapCell(agent.source), 0, heuristic);
+
         openList.add(start);
     }
 

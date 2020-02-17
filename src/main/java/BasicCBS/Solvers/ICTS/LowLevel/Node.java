@@ -1,7 +1,6 @@
 package BasicCBS.Solvers.ICTS.LowLevel;
 
 import BasicCBS.Instances.Agent;
-import BasicCBS.Instances.Maps.Coordinates.I_Coordinate;
 import BasicCBS.Instances.Maps.I_Location;
 
 import java.util.LinkedList;
@@ -15,11 +14,14 @@ public class Node implements Comparable<Node>{
     private float h;
     private Agent agent;
 
-    public Node(Agent agent, I_Location location, int g) {
+    public Node(Agent agent, I_Location location, int g, DistanceTableAStarHeuristicICTS heuristic) {
         this.agent = agent;
         this.location = location;
         this.g = g;
         parents = new LinkedList<>();
+
+        //calculate heuristic
+        heuristic.setH(this);
     }
 
     public void setH(float h) {
