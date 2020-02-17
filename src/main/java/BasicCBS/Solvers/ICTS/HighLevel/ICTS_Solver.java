@@ -35,7 +35,8 @@ public class ICTS_Solver extends A_Solver {
     protected Solution runAlgorithm(MAPF_Instance instance, RunParameters parameters) {
         initOpen(Objects.requireNonNullElseGet(parameters.constraints, ConstraintSet::new));
         ICTS_Node goal = mainLoop();
-        return solutionFromGoal(goal);
+        //return solutionFromGoal(goal);
+        return null; // TODO: 17/02/2020
     }
 
     private ICTS_Node mainLoop() {
@@ -46,7 +47,7 @@ public class ICTS_Solver extends A_Solver {
             //I_ConflictManager cat = getConflictAvoidanceTableFor(node);
             //node.setSelectedConflict(cat.selectConflict());
 
-            if(isGoal(node))
+            if(/*isGoal(node)*/true)// TODO: 17/02/2020  
                 return node;
             else
                 expandNode(node);

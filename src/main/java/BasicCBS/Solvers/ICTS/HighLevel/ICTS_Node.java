@@ -2,6 +2,7 @@ package BasicCBS.Solvers.ICTS.HighLevel;
 
 import BasicCBS.Solvers.Solution;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,7 +56,7 @@ public class ICTS_Node  implements Comparable<ICTS_Node> {
     }
 
     public List<ICTS_Node> expend(){
-
+        return null; // TODO: 17/02/2020  rotem freak
     }
 
 
@@ -87,7 +88,7 @@ public class ICTS_Node  implements Comparable<ICTS_Node> {
 
     @Override
     public int compareTo(ICTS_Node o) {
-        return Objects.compare(this, o, ICTS_Solver.this.CBSNodeComparator);
+        return Objects.compare(this, o, Comparator.comparing(ICTS_Node::getSolutionCost));
     }
 
 
