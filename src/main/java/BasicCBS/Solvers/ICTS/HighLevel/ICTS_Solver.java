@@ -1,4 +1,4 @@
-package BasicCBS.Solvers.ICTS;
+package BasicCBS.Solvers.ICTS.HighLevel;
 
 import BasicCBS.Instances.Agent;
 import BasicCBS.Instances.MAPF_Instance;
@@ -6,7 +6,6 @@ import BasicCBS.Solvers.*;
 import BasicCBS.Solvers.AStar.AStarHeuristic;
 import BasicCBS.Solvers.AStar.RunParameters_SAAStar;
 import BasicCBS.Solvers.AStar.SingleAgentAStar_Solver;
-import BasicCBS.Solvers.CBS.CBS_Solver;
 import BasicCBS.Solvers.ConstraintsAndConflicts.Constraint.ConstraintSet;
 import Environment.Metrics.InstanceReport;
 import Environment.Metrics.S_Metrics;

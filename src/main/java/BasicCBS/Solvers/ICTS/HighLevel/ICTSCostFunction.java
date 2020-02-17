@@ -1,5 +1,6 @@
-package BasicCBS.Solvers.ICTS;
+package BasicCBS.Solvers.ICTS.HighLevel;
 
+import BasicCBS.Solvers.ICTS.HighLevel.ICTS_Solver;
 import BasicCBS.Solvers.Solution;
 
 public interface ICTSCostFunction {
