@@ -44,9 +44,12 @@ public class ICTS_Solver extends A_Solver {
         if (!initializeSearch(instance))
             return null;
 
+        boolean checkPairWiseMDDs = true; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty()) {
             ICT_Node current = pollFromOpen();
-            // TODO: 2/18/2020 add possibility for pairwise goal test
+            if(checkPairWiseMDDs) {
+                // TODO: 2/18/2020 add possibility for pairwise goal test
+            }
             Map<Agent, MDD> mdds = new HashMap<>();
             for (Agent a : instance.agents) {
                 ICTSAgent agent = (ICTSAgent) a;
