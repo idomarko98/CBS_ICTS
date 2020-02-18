@@ -12,6 +12,7 @@ import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
 import BasicCBS.Solvers.ICTS.LowLevel.AStar;
 import BasicCBS.Solvers.ICTS.LowLevel.DistanceTableAStarHeuristicICTS;
 import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcher;
+import BasicCBS.Solvers.Solution;
 import Environment.IO_Package.IO_Manager;
 import Environment.RunManagerSimpleExample;
 import org.junit.jupiter.api.BeforeEach;
@@ -310,6 +311,7 @@ public class BreadthFirstSearch_MergedMDDFactoryTest {
         }
         I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
         MergedMDD mergedMDD = factory.create(mdds);
+        Solution solution = mergedMDD.getSolution();
 
         int breakPoint = 0;
     }
