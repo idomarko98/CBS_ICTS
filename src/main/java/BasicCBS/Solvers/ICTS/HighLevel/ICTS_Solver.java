@@ -2,175 +2,135 @@ package BasicCBS.Solvers.ICTS.HighLevel;
 
 import BasicCBS.Instances.Agent;
 import BasicCBS.Instances.MAPF_Instance;
-import BasicCBS.Solvers.*;
-import BasicCBS.Solvers.AStar.AStarHeuristic;
-import BasicCBS.Solvers.AStar.RunParameters_SAAStar;
-import BasicCBS.Solvers.AStar.SingleAgentAStar_Solver;
-import BasicCBS.Solvers.ConstraintsAndConflicts.Constraint.ConstraintSet;
-import Environment.Metrics.InstanceReport;
-import Environment.Metrics.S_Metrics;
+import BasicCBS.Instances.Maps.I_Location;
+import BasicCBS.Solvers.A_Solver;
+import BasicCBS.Solvers.ICTS.GeneralStuff.ICTSAgent;
+import BasicCBS.Solvers.ICTS.GeneralStuff.I_MergedMDDFactory;
+import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
+import BasicCBS.Solvers.ICTS.GeneralStuff.MergedMDD;
+import BasicCBS.Solvers.ICTS.LowLevel.AStar;
+import BasicCBS.Solvers.ICTS.LowLevel.DistanceTableAStarHeuristicICTS;
+import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcher;
+import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcherFactory;
+import BasicCBS.Solvers.RunParameters;
+import BasicCBS.Solvers.Solution;
 
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 
 public class ICTS_Solver extends A_Solver {
+    private Set<ICT_Node> contentOfOpen;
+    private Queue<ICT_Node> openList;
+    private Set<ICT_Node> closedList;
+    private ICT_NodeComparator comparator;
+    private I_LowLevelSearcherFactory searcherFactory;
+    private I_MergedMDDFactory mergedMDDFactory;
 
-//    I_Solver lowLevelSolver;
-    I_OpenList<ICTS_Node> openList;
-    ICTS_Solver.OpenListManagementMode openListManagementMode;
-//    ICTS_Solver.CBSCostFunction costFunction;
-//    Comparator<? super ICTS_Node> cbsNodeComparator;
-    private int generatedNodes;
-    private int expandedNodes;
-    private MAPF_Instance instance;
-    private final I_Solver lowLevelSolver;
-    private AStarHeuristic aStarHeuristic;
-    private final ICTSCostFunction costFunction;
+    public ICTS_Solver(ICT_NodeComparator comparator, I_LowLevelSearcherFactory searcherFactory, I_MergedMDDFactory mergedMDDFactory) {
+        this.comparator = comparator;
+        this.searcherFactory = searcherFactory;
+        this.mergedMDDFactory = mergedMDDFactory;
+    }
 
+    protected Queue<ICT_Node> createOpenList() {
+        return new PriorityQueue<>(comparator);
+    }
 
-
-
+    protected Set<ICT_Node> createClosedList() {
+        return new HashSet<>();
+    }
 
     @Override
     protected Solution runAlgorithm(MAPF_Instance instance, RunParameters parameters) {
-        initOpen(Objects.requireNonNullElseGet(parameters.constraints, ConstraintSet::new));
-        ICTS_Node goal = mainLoop();
-        //return solutionFromGoal(goal);
-        return null; // TODO: 17/02/2020
-    }
+        if (!initializeSearch(instance))
+            return null;
 
-    private ICTS_Node mainLoop() {
-        while(!openList.isEmpty() && !checkTimeout()){
-            ICTS_Node node = openList.poll();
-
-            // verify solution (find conflicts)
-            //I_ConflictManager cat = getConflictAvoidanceTableFor(node);
-            //node.setSelectedConflict(cat.selectConflict());
-
-            if(/*isGoal(node)*/true)// TODO: 17/02/2020  
-                return node;
-            else
-                expandNode(node);
+        while (!openList.isEmpty()) {
+            ICT_Node current = pollFromOpen();
+            // TODO: 2/18/2020 add possibility for pairwise goal test
+            Map<Agent, MDD> mdds = new HashMap<>();
+            for (Agent a : instance.agents) {
+                ICTSAgent agent = (ICTSAgent) a;
+                MDD mdd = agent.getMDD(current.getCost(agent));
+                mdds.put(agent, mdd);
+            }
+            MergedMDD mergedMDD = mergedMDDFactory.create(mdds);
+            if (mergedMDD != null) {
+                //We found the goal!
+                return mergedMDD.getSolution();
+            }
+            expand(current);
         }
 
-        return null; //probably a timeout
+        //Not possible to get here!
+        try {
+            throw new Exception("ICTS does not stop until it finds a solution... not possible to get here!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    //todo: complete
-    private void expandNode(ICTS_Node node) {
-        this.expandedNodes++;
-
-//        Constraint[] constraints = node.selectedConflict.getPreventingConstraints();
-//        // make copies of data structures for left child, while reusing the parent's data structures on the right child.
-//        node.leftChild = generateNode(node, constraints[0], true);
-//        node.rightChild = generateNode(node, constraints[1], false);
-//
-//        if(node.leftChild == null || node.rightChild == null){
-//            return; //probably a timeout in the low level. should abort.
-//        }
-//        addToOpen(node.leftChild);
-//        addToOpen(node.rightChild);
+    private void expand(ICT_Node current) {
+        List<ICT_Node> children = current.getChildren();
+        // TODO: 2/18/2020 maybe count expanded
+        for (ICT_Node child : children) {
+            addToOpen(child);
+            // TODO: 2/18/2020 maybe count generated
+        }
+        addToClosed(current);
     }
 
-    /**
-     * Initialises the {@link #openList OPEN} and inserts the root.
-     * @param initialConstraints a set of initial constraints on the agents.
-     */
-    private void initOpen(ConstraintSet initialConstraints) {
-        if(this.openListManagementMode == OpenListManagementMode.AUTOMATIC ||
-                this.openListManagementMode == OpenListManagementMode.AUTO_INIT_MANUAL_CLEAR){
-            addToOpen(generateRoot(initialConstraints));
+    private void addToClosed(ICT_Node current) {
+        closedList.add(current);
+    }
+
+    private boolean initializeSearch(MAPF_Instance instance) {
+        openList = createOpenList();
+        contentOfOpen = new HashSet<>();
+        closedList = createClosedList();
+
+        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(instance.agents, instance.map);
+        Map<Agent, Integer> startCosts = new HashMap<>();
+        for (Agent agent : instance.agents) {
+            if (!(agent instanceof ICTSAgent)) {
+                try {
+                    throw new InputMismatchException("The agents of the ICTS_Searcher must be of type ICTSAgent");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+            MAPF_Instance agentInstance = instance.getSubproblemFor(agent);
+            I_LowLevelSearcher searcher = searcherFactory.createSearcher(agentInstance, heuristicICTS);
+            ((ICTSAgent) agent).setSearcher(searcher);
+            I_Location start = instance.map.getMapCell(agent.source);
+            Integer depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
+            if (depth == null) {
+                //The single agent path does not exist
+                try {
+                    throw new Exception("The single agent plan for agent " + agent.iD + " does not exist!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+            startCosts.put(agent, depth);
+        }
+        ICT_Node startNode = new ICT_Node(startCosts);
+        addToOpen(startNode);
+        return true;
+    }
+
+    private ICT_Node pollFromOpen() {
+        ICT_Node current = openList.poll();
+        contentOfOpen.remove(current);
+        return current;
+    }
+
+    private void addToOpen(ICT_Node node) {
+        if(!contentOfOpen.contains(node) && !closedList.contains(node)){
+            openList.add(node);
+            contentOfOpen.add(node);
         }
     }
-
-    private boolean addToOpen(ICTS_Node node) {
-        return openList.add(node);
-    }
-
-    /**
-     * Creates a root node.
-     */
-    private ICTS_Node generateRoot(ConstraintSet initialConstraints) {
-        this.generatedNodes++;
-
-        Solution solution = new Solution(); // init an empty solution
-        // for every agent, add its plan to the solution
-        for (Agent agent :
-                this.instance.agents) {
-            solution = solveSubproblem(agent, solution, initialConstraints);
-        }
-
-        return new ICTS_Node(solution, costFunction.solutionCost(solution, this));
-    }
-
-    private Solution solveSubproblem(Agent agent, Solution currentSolution, ConstraintSet constraints) {
-        InstanceReport instanceReport = S_Metrics.newInstanceReport();
-        RunParameters subproblemParameters = getSubproblemParameters(currentSolution, constraints, instanceReport);
-        Solution subproblemSolution = this.lowLevelSolver.solve(this.instance.getSubproblemFor(agent), subproblemParameters);
-        digestSubproblemReport(instanceReport);
-        return subproblemSolution;
-    }
-
-    private RunParameters getSubproblemParameters(Solution currentSolution, ConstraintSet constraints, InstanceReport instanceReport) {
-        long timeLeftToTimeout = super.maximumRuntime - (System.currentTimeMillis() - super.startTime);
-        RunParameters subproblemParametes = new RunParameters(timeLeftToTimeout, constraints, instanceReport, currentSolution);
-        if(this.lowLevelSolver instanceof SingleAgentAStar_Solver){ // upgrades to a better heuristic
-            subproblemParametes = new RunParameters_SAAStar(subproblemParametes, this.aStarHeuristic);
-        }
-        return subproblemParametes;
-    }
-
-    private void digestSubproblemReport(InstanceReport subproblemReport) {
-        Integer statesGenerated = subproblemReport.getIntegerValue(InstanceReport.StandardFields.generatedNodesLowLevel);
-        super.totalLowLevelStatesGenerated += statesGenerated==null ? 0 : statesGenerated;
-        Integer statesExpanded = subproblemReport.getIntegerValue(InstanceReport.StandardFields.expandedNodesLowLevel);
-        super.totalLowLevelStatesExpanded += statesExpanded==null ? 0 : statesExpanded;
-        Integer lowLevelRuntime = subproblemReport.getIntegerValue(InstanceReport.StandardFields.elapsedTimeMS);
-        super.instanceReport.integerAddition(InstanceReport.StandardFields.totalLowLevelTimeMS, lowLevelRuntime);
-        //we consolidate the subproblem report into the main report, and remove the subproblem report.
-        S_Metrics.removeReport(subproblemReport);
-    }
-
-    public ICTS_Solver(I_Solver lowLevelSolver, I_OpenList<ICTS_Node> openList, ICTS_Solver.OpenListManagementMode openListManagementMode,
-                      ICTSCostFunction costFunction, Comparator<? super ICTS_Node> ictsNodeComparator) {
-        this.lowLevelSolver = Objects.requireNonNullElseGet(lowLevelSolver, SingleAgentAStar_Solver::new);
-//        this.openList = Objects.requireNonNullElseGet(openList, OpenList::new);
-//        this.openListManagementMode = openListManagementMode != null ? openListManagementMode : CBS_Solver.OpenListManagementMode.AUTOMATIC;
-//        clearOPEN();
-//        // if a specific cost function is not provided, use standard SOC (Sum of Individual Costs)
-        this.costFunction = costFunction != null ? costFunction : (solution, cbs) -> solution.costFunction();//solution.sumIndividualCosts();
-//        this.cbsNodeComparator = cbsNodeComparator != null ? cbsNodeComparator : Comparator.comparing(CBS_Solver.CBS_Node::getSolutionCost);
-    }
-//
-//
-//
-//
-public enum OpenListManagementMode{
-    /**
-     * Will handle OPEN automatically. This is the standard mode of operation. The solver will clear OPEN before and
-     * after every run, and initialize OPEN at the start of every run with a single root {@link ICTS_Node node}.
-     */
-    AUTOMATIC,
-    /**
-     * Will initialize OPEN automatically, but clearing it before or after a run will be controlled manually.
-     * Note that this means the solver keeps part of its state after running. If you want to reuse the solver, you
-     * have to manually handle the clearing of OPEN. If you keep references to many such solvers, this may adversely
-     * affect available memory.
-     */
-    AUTO_INIT_MANUAL_CLEAR,
-    /**
-     * Will not initialize OPEN (assumes that it was already initialized), but will clear it after running.
-     * It is not cleared before running. If it were to be cleared before running, manual initialization would be
-     * impossible.
-     */
-    MANUAL_INIT_AUTO_CLEAR,
-    /**
-     * Will not initialize OPEN (assumes that it was already initialized).
-     * Will not clear OPEN automatically.
-     * Note that this means the solver keeps part of its state after running. If you want to reuse the solver, you
-     * have to manually handle the clearing of OPEN. If you keep references to many such solvers, this may adversely
-     * affect available memory.
-     */
-    MANUAL
-}
 }

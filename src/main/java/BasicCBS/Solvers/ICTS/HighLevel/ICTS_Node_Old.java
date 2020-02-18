@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 //extends SingleAgentAStar_Solver.AStarState
-public class ICTS_Node  implements Comparable<ICTS_Node> {
+public class ICTS_Node_Old implements Comparable<ICTS_Node_Old> {
 
     /*  =  = fields =  */
 
@@ -27,9 +27,9 @@ public class ICTS_Node  implements Comparable<ICTS_Node> {
     /*  =  =  = CBS tree branches =  =  */
 
 
-    private ICTS_Node parent;
+    private ICTS_Node_Old parent;
 
-    private List<ICTS_Node> children;
+    private List<ICTS_Node_Old> children;
 
 
     /*  =  = constructors =  */
@@ -40,7 +40,7 @@ public class ICTS_Node  implements Comparable<ICTS_Node> {
      * @param solution     an initial solution for all agents.
      * @param solutionCost the cost of the solution.
      */
-    public ICTS_Node(Solution solution, float solutionCost) {
+    public ICTS_Node_Old(Solution solution, float solutionCost) {
         this.solution = solution;
         this.solutionCost = solutionCost;
         this.parent = null;
@@ -49,20 +49,20 @@ public class ICTS_Node  implements Comparable<ICTS_Node> {
     /**
      * Non-root constructor.
      */
-    public ICTS_Node(Solution solution, float solutionCost, ICTS_Node parent) {
+    public ICTS_Node_Old(Solution solution, float solutionCost, ICTS_Node_Old parent) {
         this.solution = solution;
         this.solutionCost = solutionCost;
         this.parent = parent;
     }
 
-    public List<ICTS_Node> expend(){
+    public List<ICTS_Node_Old> expend(){
         return null; // TODO: 17/02/2020  rotem freak
     }
 
 
     /*  =  = when expanding a node =  */
 
-    public void setChildren(List<ICTS_Node> list){
+    public void setChildren(List<ICTS_Node_Old> list){
         this.children = list;
     }
 
@@ -78,17 +78,17 @@ public class ICTS_Node  implements Comparable<ICTS_Node> {
     }
 
 
-    public ICTS_Node getParent() {
+    public ICTS_Node_Old getParent() {
         return parent;
     }
 
-    public List<ICTS_Node> getChildren(){
+    public List<ICTS_Node_Old> getChildren(){
         return children;
     }
 
     @Override
-    public int compareTo(ICTS_Node o) {
-        return Objects.compare(this, o, Comparator.comparing(ICTS_Node::getSolutionCost));
+    public int compareTo(ICTS_Node_Old o) {
+        return Objects.compare(this, o, Comparator.comparing(ICTS_Node_Old::getSolutionCost));
     }
 
 

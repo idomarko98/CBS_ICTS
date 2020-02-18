@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ICTSAgent extends Agent {
-    Map<Integer, MDD> mdds;
-    I_LowLevelSearcher searcher;
+    private Map<Integer, MDD> mdds;
+    private I_LowLevelSearcher searcher;
 
     public ICTSAgent(int iD, I_Coordinate source, I_Coordinate target) {
         super(iD, source, target);
