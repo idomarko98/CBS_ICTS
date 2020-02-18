@@ -25,14 +25,14 @@ public class MDD {
         this.goal = mddGoal;
 
         while (true) {
-            if(currentLevel.size() == 1 && currentLevel.peek().getValue(agent).getG() == 0) {
+            if(currentLevel.size() == 1 && currentLevel.peek().getValue().getG() == 0) {
                 //We are at the start state, so we can finish the building of the MDD
                 break;
             }
             HashMap<Node, MDDNode> previousLevel = new HashMap<>();
             while (!currentLevel.isEmpty()) {
                 MDDNode current = currentLevel.poll();
-                Node currentValue = current.getValue(agent);
+                Node currentValue = current.getValue();
                 List<Node> currentParents = currentValue.getParents();
                 for (Node parent : currentParents) {
                     MDDNode mddParent;
@@ -57,5 +57,9 @@ public class MDD {
 
     public MDDNode getGoal() {
         return goal;
+    }
+
+    public int getDepth() {
+        return goal.getValue().getG();
     }
 }

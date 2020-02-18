@@ -3,23 +3,15 @@ package BasicCBS.Solvers.ICTS.GeneralStuff;
 import BasicCBS.Instances.Agent;
 import BasicCBS.Solvers.ICTS.LowLevel.Node;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MDDNode {
     private List<MDDNode> neighbors;
-    private Map<Agent, Node> values;
+    private Node value;
 
     public MDDNode(Node current) {
         neighbors = new LinkedList<>();
-        values = new HashMap<>();
-        values.put(current.getAgent(), current);
-    }
-
-    public void addValue(Node value){
-        values.put(value.getAgent(), value);
+        value = current;
     }
 
     public void addNeighbor(MDDNode neighbor){
@@ -30,11 +22,31 @@ public class MDDNode {
         return neighbors;
     }
 
-    public Map<Agent, Node> getValues() {
-        return values;
+    public Node getValue(){
+        return value;
     }
 
-    public Node getValue(Agent agent){
-        return values.get(agent);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MDDNode mddNode = (MDDNode) o;
+        return value.equals(mddNode.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    public boolean sameLocation(MDDNode other){
+        return this.value.getLocation().equals(other.value.getLocation());
+    }
+
+    @Override
+    public String toString() {
+        return "MDDNode{" +
+                "value=" + value +
+                '}';
     }
 }
