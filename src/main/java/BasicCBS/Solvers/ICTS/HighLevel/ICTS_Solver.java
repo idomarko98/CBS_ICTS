@@ -44,29 +44,14 @@ public class ICTS_Solver extends A_Solver {
         if (!initializeSearch(instance))
             return null;
 
-        boolean checkPairWiseMDDs = true; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
+        boolean checkPairWiseMDDs = false; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty()) {
             ICT_Node current = pollFromOpen();
             boolean pairFlag = true;
-            if(checkPairWiseMDDs) {
-                for (Agent aI : instance.agents) {
-                    for (Agent aJ : instance.agents) {
-                        if(!aI.equals(aJ)){
-                            ICTSAgent agentI = (ICTSAgent) aI;
-                            ICTSAgent agentJ = (ICTSAgent) aJ;
-                            MDD mddI = agentI.getMDD(current.getCost(agentI));
-                            MDD mddJ = agentJ.getMDD(current.getCost(agentJ));
-                            Map<Agent, MDD> pairwiseMap = new HashMap();
-                            pairwiseMap.put(agentI, mddI);
-                            pairwiseMap.put(agentJ, mddJ);
-                            MergedMDD pairwiseMergedMDD = mergedMDDFactory.create(pairwiseMap);
-                            if(pairwiseMergedMDD == null) //couldn't find solution between 2 agents
-                                pairFlag = false;
-                        }
-                    }
-                }
+            if (checkPairWiseMDDs) {
+                pairFlag = pairWiseGoalTest(instance, current);
             }
-            if(!checkPairWiseMDDs || pairFlag) {
+            if (!checkPairWiseMDDs || pairFlag) {
                 Map<Agent, MDD> mdds = new HashMap<>();
                 for (Agent a : instance.agents) {
                     ICTSAgent agent = (ICTSAgent) a;
@@ -89,6 +74,27 @@ public class ICTS_Solver extends A_Solver {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private boolean pairWiseGoalTest(MAPF_Instance instance, ICT_Node current) {
+        for (int i = 0; i < instance.agents.size(); i++) {
+            Agent aI = instance.agents.get(i);
+            for (int j = i + 1; j < instance.agents.size(); j++) {
+                Agent aJ = instance.agents.get(j);
+
+                ICTSAgent agentI = (ICTSAgent) aI;
+                ICTSAgent agentJ = (ICTSAgent) aJ;
+                MDD mddI = agentI.getMDD(current.getCost(agentI));
+                MDD mddJ = agentJ.getMDD(current.getCost(agentJ));
+                Map<Agent, MDD> pairwiseMap = new HashMap<>();
+                pairwiseMap.put(agentI, mddI);
+                pairwiseMap.put(agentJ, mddJ);
+                MergedMDD pairwiseMergedMDD = mergedMDDFactory.create(pairwiseMap);
+                if (pairwiseMergedMDD == null) //couldn't find solution between 2 agents
+                    return false;
+            }
+        }
+        return true;
     }
 
     private void expand(ICT_Node current) {
@@ -149,7 +155,7 @@ public class ICTS_Solver extends A_Solver {
     }
 
     private void addToOpen(ICT_Node node) {
-        if(!contentOfOpen.contains(node) && !closedList.contains(node)){
+        if (!contentOfOpen.contains(node) && !closedList.contains(node)) {
             openList.add(node);
             contentOfOpen.add(node);
         }
