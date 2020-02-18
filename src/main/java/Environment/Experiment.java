@@ -69,6 +69,7 @@ public  class Experiment {
       if(solution != null){
         System.out.println("Solution is " + (solution.isValidSolution() ? "valid!" : "invalid!!!"));
         System.out.println("Sum of Individual Costs: " + solution.sumIndividualCosts());
+        System.out.println("Cost function: " + solution.costFunctionName() + ", value = " + solution.costFunction());
       }
       Integer elapsedTime = instanceReport.getIntegerValue(InstanceReport.StandardFields.elapsedTimeMS);
       if(elapsedTime != null){

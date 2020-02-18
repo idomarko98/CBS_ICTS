@@ -4,10 +4,7 @@ import BasicCBS.Instances.Agent;
 import BasicCBS.Instances.MAPF_Instance;
 import BasicCBS.Instances.Maps.I_Location;
 import BasicCBS.Solvers.A_Solver;
-import BasicCBS.Solvers.ICTS.GeneralStuff.ICTSAgent;
-import BasicCBS.Solvers.ICTS.GeneralStuff.I_MergedMDDFactory;
-import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
-import BasicCBS.Solvers.ICTS.GeneralStuff.MergedMDD;
+import BasicCBS.Solvers.ICTS.GeneralStuff.*;
 import BasicCBS.Solvers.ICTS.LowLevel.DistanceTableAStarHeuristicICTS;
 import BasicCBS.Solvers.ICTS.LowLevel.A_LowLevelSearcher;
 import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcherFactory;
@@ -44,6 +41,7 @@ public class ICTS_Solver extends A_Solver {
 
     @Override
     protected Solution runAlgorithm(MAPF_Instance instance, RunParameters parameters) {
+        instance = ICTS_MAPFInstance.Copy(instance);
         if (!initializeSearch(instance))
             return null;
 
