@@ -47,19 +47,37 @@ public class ICTS_Solver extends A_Solver {
         boolean checkPairWiseMDDs = true; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty()) {
             ICT_Node current = pollFromOpen();
+            boolean pairFlag = true;
             if(checkPairWiseMDDs) {
-                // TODO: 2/18/2020 add possibility for pairwise goal test
+                for (Agent aI : instance.agents) {
+                    for (Agent aJ : instance.agents) {
+                        if(!aI.equals(aJ)){
+                            ICTSAgent agentI = (ICTSAgent) aI;
+                            ICTSAgent agentJ = (ICTSAgent) aJ;
+                            MDD mddI = agentI.getMDD(current.getCost(agentI));
+                            MDD mddJ = agentJ.getMDD(current.getCost(agentJ));
+                            Map<Agent, MDD> pairwiseMap = new HashMap();
+                            pairwiseMap.put(agentI, mddI);
+                            pairwiseMap.put(agentJ, mddJ);
+                            MergedMDD pairwiseMergedMDD = mergedMDDFactory.create(pairwiseMap);
+                            if(pairwiseMergedMDD == null) //couldn't find solution between 2 agents
+                                pairFlag = false;
+                        }
+                    }
+                }
             }
-            Map<Agent, MDD> mdds = new HashMap<>();
-            for (Agent a : instance.agents) {
-                ICTSAgent agent = (ICTSAgent) a;
-                MDD mdd = agent.getMDD(current.getCost(agent));
-                mdds.put(agent, mdd);
-            }
-            MergedMDD mergedMDD = mergedMDDFactory.create(mdds);
-            if (mergedMDD != null) {
-                //We found the goal!
-                return mergedMDD.getSolution();
+            if(!checkPairWiseMDDs || pairFlag) {
+                Map<Agent, MDD> mdds = new HashMap<>();
+                for (Agent a : instance.agents) {
+                    ICTSAgent agent = (ICTSAgent) a;
+                    MDD mdd = agent.getMDD(current.getCost(agent));
+                    mdds.put(agent, mdd);
+                }
+                MergedMDD mergedMDD = mergedMDDFactory.create(mdds);
+                if (mergedMDD != null) {
+                    //We found the goal!
+                    return mergedMDD.getSolution();
+                }
             }
             expand(current);
         }
