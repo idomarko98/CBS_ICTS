@@ -14,11 +14,6 @@ import Environment.RunManagerSimpleExample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class AStarTest {
     private final Enum_MapCellType e = Enum_MapCellType.EMPTY;
     private final Enum_MapCellType w = Enum_MapCellType.WALL;
@@ -103,7 +98,7 @@ public class AStarTest {
     private MAPF_Instance instanceCircle2 = new MAPF_Instance("instanceCircle1", mapCircle, new Agent[]{agent12to33});
     private MAPF_Instance instanceUnsolvable = new MAPF_Instance("instanceUnsolvable", mapWithPocket, new Agent[]{agent04to00});
 
-    I_LowLevelSearcher aStar;
+    A_LowLevelSearcher aStar;
 
     @BeforeEach
     void setUp() {

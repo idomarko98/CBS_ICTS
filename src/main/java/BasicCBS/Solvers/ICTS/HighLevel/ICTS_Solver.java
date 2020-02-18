@@ -8,12 +8,12 @@ import BasicCBS.Solvers.ICTS.GeneralStuff.ICTSAgent;
 import BasicCBS.Solvers.ICTS.GeneralStuff.I_MergedMDDFactory;
 import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
 import BasicCBS.Solvers.ICTS.GeneralStuff.MergedMDD;
-import BasicCBS.Solvers.ICTS.LowLevel.AStar;
 import BasicCBS.Solvers.ICTS.LowLevel.DistanceTableAStarHeuristicICTS;
-import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcher;
+import BasicCBS.Solvers.ICTS.LowLevel.A_LowLevelSearcher;
 import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcherFactory;
 import BasicCBS.Solvers.RunParameters;
 import BasicCBS.Solvers.Solution;
+import Environment.Metrics.InstanceReport;
 
 import java.util.*;
 
@@ -24,6 +24,9 @@ public class ICTS_Solver extends A_Solver {
     private ICT_NodeComparator comparator;
     private I_LowLevelSearcherFactory searcherFactory;
     private I_MergedMDDFactory mergedMDDFactory;
+
+    private int expandedHighLevelNodesNum;
+    private int generatedHighLevelNodesNum;
 
     public ICTS_Solver(ICT_NodeComparator comparator, I_LowLevelSearcherFactory searcherFactory, I_MergedMDDFactory mergedMDDFactory) {
         this.comparator = comparator;
@@ -44,7 +47,7 @@ public class ICTS_Solver extends A_Solver {
         if (!initializeSearch(instance))
             return null;
 
-        boolean checkPairWiseMDDs = false; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
+        boolean checkPairWiseMDDs = true && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty()) {
             ICT_Node current = pollFromOpen();
             boolean pairFlag = true;
@@ -61,6 +64,7 @@ public class ICTS_Solver extends A_Solver {
                 MergedMDD mergedMDD = mergedMDDFactory.create(mdds);
                 if (mergedMDD != null) {
                     //We found the goal!
+                    updateExpandedAndGeneratedNum(instance);
                     return mergedMDD.getSolution();
                 }
             }
@@ -73,7 +77,31 @@ public class ICTS_Solver extends A_Solver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        updateExpandedAndGeneratedNum(instance);
         return null;
+    }
+
+    private void updateExpandedAndGeneratedNum(MAPF_Instance instance) {
+        int totalLowLevelExpanded = 0;
+        int totalLowLevelGenerated = 0;
+        for (Agent agent : instance.agents) {
+            totalLowLevelExpanded += ((ICTSAgent) agent).getExpandedNodesNum();
+            totalLowLevelGenerated += ((ICTSAgent) agent).getGeneratedNodesNum();
+        }
+        super.totalLowLevelStatesExpanded = totalLowLevelExpanded;
+        super.totalLowLevelStatesGenerated = totalLowLevelGenerated;
+    }
+
+    @Override
+    protected void writeMetricsToReport(Solution solution) {
+        super.writeMetricsToReport(solution);
+        super.instanceReport.putIntegerValue(InstanceReport.StandardFields.generatedNodes, this.generatedHighLevelNodesNum);
+        super.instanceReport.putIntegerValue(InstanceReport.StandardFields.expandedNodes, this.expandedHighLevelNodesNum);
+        super.instanceReport.putStringValue(InstanceReport.StandardFields.solver, getName());
+    }
+
+    private String getName() {
+        return "ICTS";
     }
 
     private boolean pairWiseGoalTest(MAPF_Instance instance, ICT_Node current) {
@@ -99,10 +127,10 @@ public class ICTS_Solver extends A_Solver {
 
     private void expand(ICT_Node current) {
         List<ICT_Node> children = current.getChildren();
-        // TODO: 2/18/2020 maybe count expanded
+        expandedHighLevelNodesNum++;
         for (ICT_Node child : children) {
             addToOpen(child);
-            // TODO: 2/18/2020 maybe count generated
+            generatedHighLevelNodesNum++;
         }
         addToClosed(current);
     }
@@ -115,6 +143,8 @@ public class ICTS_Solver extends A_Solver {
         openList = createOpenList();
         contentOfOpen = new HashSet<>();
         closedList = createClosedList();
+        expandedHighLevelNodesNum = 0;
+        generatedHighLevelNodesNum = 0;
 
         DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(instance.agents, instance.map);
         Map<Agent, Integer> startCosts = new HashMap<>();
@@ -128,7 +158,7 @@ public class ICTS_Solver extends A_Solver {
                 return false;
             }
             MAPF_Instance agentInstance = instance.getSubproblemFor(agent);
-            I_LowLevelSearcher searcher = searcherFactory.createSearcher(agentInstance, heuristicICTS);
+            A_LowLevelSearcher searcher = searcherFactory.createSearcher(agentInstance, heuristicICTS);
             ((ICTSAgent) agent).setSearcher(searcher);
             I_Location start = instance.map.getMapCell(agent.source);
             Integer depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
@@ -144,6 +174,7 @@ public class ICTS_Solver extends A_Solver {
             startCosts.put(agent, depth);
         }
         ICT_Node startNode = new ICT_Node(startCosts);
+        generatedHighLevelNodesNum++;
         addToOpen(startNode);
         return true;
     }

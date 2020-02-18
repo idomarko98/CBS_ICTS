@@ -7,7 +7,7 @@ import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
 
 import java.util.*;
 
-public class AStar implements I_LowLevelSearcher{
+public class AStar extends A_LowLevelSearcher {
 
     private Queue<Node> openList;
     /**
@@ -108,10 +108,10 @@ public class AStar implements I_LowLevelSearcher{
     }
 
     private void expand(Node node){
-        // TODO: 2/17/2020 add 1 to expended nodes
+        expandedNodesNum++;
         List<I_Location> neighborLocations = node.getNeighborLocations();
         for (I_Location location : neighborLocations) {
-            // TODO: 2/17/2020 add 1 to generated nodes
+            generatedNodesNum++;
             Node neighbor = new Node(agent, location, node.getG() + 1, heuristic);
             neighbor.addParent(node);
             addToOpen(neighbor);

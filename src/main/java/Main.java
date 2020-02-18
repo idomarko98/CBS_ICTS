@@ -1,3 +1,9 @@
+import BasicCBS.Solvers.ICTS.GeneralStuff.BreadthFirstSearch_MergedMDDFactory;
+import BasicCBS.Solvers.ICTS.GeneralStuff.ICTS_MAPFInstance;
+import BasicCBS.Solvers.ICTS.HighLevel.ICTS_Solver;
+import BasicCBS.Solvers.ICTS.HighLevel.ICT_NodeMakespanComparator;
+import BasicCBS.Solvers.ICTS.LowLevel.AStarFactory;
+import BasicCBS.Solvers.I_Solver;
 import Environment.A_RunManager;
 import Environment.IO_Package.IO_Manager;
 import Environment.RunManagerSimpleExample;
@@ -31,7 +37,8 @@ import java.text.SimpleDateFormat;
 public class Main {
 
     // where to put generated reports. The default is a new folder called CBS_Results, under the user's home directory.
-    public static final String resultsOutputDir = IO_Manager.buildPath(new String[]{System.getProperty("user.home"), "CBS_Results"});
+    public static final String resultsOutputDir = "C:\\Users\\User\\Desktop\\second_degree\\קורסים\\סמסטר א\\שיטות חיפוש בבינה מלאכותית\\Project\\Results";
+    //public static final String resultsOutputDir = IO_Manager.buildPath(new String[]{System.getProperty("user.home"), "CBS_Results"});
 //    public static final String resultsOutputDir = IO_Manager.buildPath(new String[]{   IO_Manager.testResources_Directory +
 //                                                                                        "\\Reports default directory"});
 
@@ -39,12 +46,14 @@ public class Main {
         if(verifyOutputPath()){
             // will solve a single instance and print the solution
             solveOneInstanceExample();
+            /*
             // will solve multiple instances and print a simple report for each instance
             runMultipleExperimentsExample();
             // will solve a set of instances. These instances have known optimal solution costs (found at
             // src\test\resources\TestingBenchmark\Results.csv), and so can be used as a benchmark.
             runTestingBenchmarkExperiment();
             // all examples will also produce a report in CSV format, and save it to resultsOutputDir (see above)
+            */
         }
     }
 
@@ -65,7 +74,7 @@ public class Main {
 
         /*  =   Set Path   =*/
         String path = IO_Manager.buildPath( new String[]{   IO_Manager.resources_Directory,
-                                                            "Instances\\\\BGU_Instances\\\\den520d-10-0"});
+                                                            "Instances\\\\BGU_Instances\\\\den520d-2-0"});
         InstanceManager.InstancePath instancePath = new InstanceManager.InstancePath(path);
 
 
@@ -73,12 +82,14 @@ public class Main {
         InstanceManager instanceManager = new InstanceManager(null, new InstanceBuilder_BGU());
 
         MAPF_Instance instance = RunManagerSimpleExample.getInstanceFromPath(instanceManager, instancePath);
-
+        MAPF_Instance ictsInstance = ICTS_MAPFInstance.Copy(instance);
         // Solve
-        CBS_Solver solver = new CBS_Solver();
+        I_Solver solver = new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), new BreadthFirstSearch_MergedMDDFactory());
+        //CBS_Solver solver = new CBS_Solver();
         RunParameters runParameters = new RunParameters();
-        Solution solution = solver.solve(instance, runParameters);
+        Solution solution = solver.solve(ictsInstance, runParameters);
 
+        System.out.println("Done!");
         //output results
         System.out.println(solution.readableToString());
         outputResults();
@@ -117,6 +128,10 @@ public class Main {
                                     InstanceReport.StandardFields.solver,
                                     InstanceReport.StandardFields.solved,
                                     InstanceReport.StandardFields.elapsedTimeMS,
+                                    InstanceReport.StandardFields.expandedNodes,
+                                    InstanceReport.StandardFields.generatedNodes,
+                                    InstanceReport.StandardFields.expandedNodesLowLevel,
+                                    InstanceReport.StandardFields.generatedNodesLowLevel,
                                     InstanceReport.StandardFields.solutionCost,
                                     InstanceReport.StandardFields.solution});
         } catch (IOException e) {

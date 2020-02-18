@@ -9,23 +9,15 @@ import BasicCBS.Instances.Maps.*;
 import BasicCBS.Instances.Maps.Coordinates.Coordinate_2D;
 import BasicCBS.Instances.Maps.Coordinates.I_Coordinate;
 import BasicCBS.Solvers.ICTS.GeneralStuff.*;
-import BasicCBS.Solvers.ICTS.LowLevel.AStar;
 import BasicCBS.Solvers.ICTS.LowLevel.AStarFactory;
-import BasicCBS.Solvers.ICTS.LowLevel.DistanceTableAStarHeuristicICTS;
-import BasicCBS.Solvers.ICTS.LowLevel.I_LowLevelSearcher;
+import BasicCBS.Solvers.ICTS.LowLevel.A_LowLevelSearcher;
 import BasicCBS.Solvers.RunParameters;
 import BasicCBS.Solvers.Solution;
 import Environment.IO_Package.IO_Manager;
-import Environment.RunManagerSimpleExample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ICTS_SolverTest {
     private final Enum_MapCellType e = Enum_MapCellType.EMPTY;
@@ -162,7 +154,7 @@ public class ICTS_SolverTest {
     private MAPF_Instance instanceCircle2 = new MAPF_Instance("instanceCircle1", mapCircle, new Agent[]{agent12to33});
     private MAPF_Instance instanceUnsolvable = new MAPF_Instance("instanceUnsolvable", mapWithPocket, new Agent[]{agent04to00});
 
-    Map<Agent, I_LowLevelSearcher> aStars;
+    Map<Agent, A_LowLevelSearcher> aStars;
     Map<Agent, MDD> mdds;
 
     @BeforeEach
