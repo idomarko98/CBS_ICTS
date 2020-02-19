@@ -1,6 +1,8 @@
 package Environment;
 
 import BasicCBS.Solvers.ICTS.GeneralStuff.BreadthFirstSearch_MergedMDDFactory;
+import BasicCBS.Solvers.ICTS.GeneralStuff.DepthFirstSearch_MergedMDDFactory;
+import BasicCBS.Solvers.ICTS.GeneralStuff.I_MergedMDDFactory;
 import BasicCBS.Solvers.ICTS.HighLevel.ICTS_Solver;
 import BasicCBS.Solvers.ICTS.HighLevel.ICT_NodeMakespanComparator;
 import BasicCBS.Solvers.ICTS.LowLevel.AStarFactory;
@@ -22,7 +24,9 @@ public class RunManagerSimpleExample extends A_RunManager {
     void setSolvers() {
         this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
         this.solvers.add(new CBS_Solver());
-        this.solvers.add(new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), new BreadthFirstSearch_MergedMDDFactory()));
+        I_MergedMDDFactory mergedMDDFactory = new DepthFirstSearch_MergedMDDFactory();
+        //I_MergedMDDFactory mergedMDDFactory = new BreadthFirstSearch_MergedMDDFactory();
+        this.solvers.add(new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), mergedMDDFactory));
     }
 
     /*  = Set Experiments =  */

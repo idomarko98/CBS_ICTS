@@ -45,7 +45,7 @@ public class ICTS_Solver extends A_Solver {
         if (!initializeSearch(instance))
             return null;
 
-        boolean checkPairWiseMDDs = true && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
+        boolean checkPairWiseMDDs = false && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty()) {
             ICT_Node current = pollFromOpen();
             boolean pairFlag = true;

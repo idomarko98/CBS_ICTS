@@ -1,18 +1,10 @@
 package BasicCBS.Solvers.ICTS.GeneralStuff;
 
-import BasicCBS.Instances.Agent;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
-/**
- * Implements a BFS Factory for Merged MDD.
- * We don't need a closed set because MDDs are DAGS. (no cycles...)
- */
-public class BreadthFirstSearch_MergedMDDFactory extends SearchBased_MergedMDDFactory {
-
+public class DepthFirstSearch_MergedMDDFactory extends SearchBased_MergedMDDFactory {
     private Map<MergedMDDNode, MergedMDDNode> contentOfOpen;
-    private Queue<MergedMDDNode> openList;
+    private Stack<MergedMDDNode> openList;
     /**
      * We implement a closed list only for being able to say that we have an error, and when we realize that the MDD is not a DAG
      */
@@ -43,21 +35,15 @@ public class BreadthFirstSearch_MergedMDDFactory extends SearchBased_MergedMDDFa
             for (MergedMDDNode parent : node.getParents()) {
                 parent.fixNeighbor(inOpen);
             }
-        } else if (closedList.contains(node)) {
-            try {
-                throw new Exception("The MDD supposed to be DAG, but we now found a cyclic path");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            openList.add(node);
+        } else if (!closedList.contains(node)) {
+            openList.push(node);
             contentOfOpen.put(node, node);
         }
     }
 
     @Override
     protected MergedMDDNode pollFromOpen() {
-        MergedMDDNode next = openList.poll();
+        MergedMDDNode next = openList.pop();
         contentOfOpen.remove(next);
         return next;
     }
@@ -76,7 +62,7 @@ public class BreadthFirstSearch_MergedMDDFactory extends SearchBased_MergedMDDFa
      *
      * @return new open list
      */
-    protected Queue<MergedMDDNode> createNewOpenList() {
-        return new LinkedList<>();
+    protected Stack<MergedMDDNode> createNewOpenList() {
+        return new Stack<>();
     }
 }
