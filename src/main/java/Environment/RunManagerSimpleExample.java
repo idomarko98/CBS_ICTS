@@ -37,12 +37,32 @@ public class RunManagerSimpleExample extends A_RunManager {
     /*  = Set Experiments =  */
     @Override
     void setExperiments() {
+        addExperiment_ourExperiment();
+        /*
         addExperiment_16_7();
         addExperimentMovingAI_8room();
+        */
     }
 
 
     /* = Experiments =  */
+
+    private void addExperiment_ourExperiment(){
+        /*  =   Set Path   =*/
+        String path = IO_Manager.buildPath( new String[]{   IO_Manager.resources_Directory,
+                "Instances\\\\Experiment_Instances"});
+
+        /*  =   Set Properties   =  */
+        InstanceProperties properties = new InstanceProperties(null, -1, new int[]{2});
+
+
+        /*  =   Set Instance Manager   =  */
+        InstanceManager instanceManager = new InstanceManager(path, new InstanceBuilder_MovingAI(), properties);
+
+        /*  =   Add new experiment   =  */
+        Experiment gridExperiment = new Experiment("Experiment", instanceManager);
+        this.experiments.add(gridExperiment);
+    }
 
     private void addExperiment_16_7(){
         /*  =   Set Path   =*/

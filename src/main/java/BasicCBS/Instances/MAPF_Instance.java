@@ -16,6 +16,10 @@ public class MAPF_Instance {
      */
     public final String name;
     /**
+     * An instance might have a longer, more descriptive name. If not provided, defaults to being the same as {@link #name}.
+     */
+    public final String extendedName;
+    /**
      * The map on which the MAPF instance/problem is solved. For example, a 2-dimensional, 4-connected grid.
      */
     public final I_Map map;
@@ -25,16 +29,25 @@ public class MAPF_Instance {
      */
     public final List<Agent> agents;
     /**
-    * Obstacle as a percentage, Like: 15%
-    */
+     * Obstacle as a percentage, Like: 15%
+     */
     private int ObstaclePercentage = -1;
 
 
-    public MAPF_Instance(String name, I_Map map, Agent[] agents) {
+    public MAPF_Instance(String name, I_Map map, Agent[] agents, String extendedName) {
         if(name == null || map == null || agents == null){throw new IllegalArgumentException();}
         this.name = name;
         this.map = map;
         this.agents = List.of(agents); //unmodifiable list
+        this.extendedName = extendedName;
+    }
+
+    public MAPF_Instance(String name, I_Map map, Agent[] agents) {
+        this(name, map, agents, name);
+    }
+
+    MAPF_Instance(String name, I_Map map, List<Agent> agents, String extendedName) {
+        this(name, map, agents.toArray(Agent[]::new), extendedName);
     }
 
     MAPF_Instance(String name, I_Map map, List<Agent> agents) {
