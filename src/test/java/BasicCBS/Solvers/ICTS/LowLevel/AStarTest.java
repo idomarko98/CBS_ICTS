@@ -106,7 +106,7 @@ public class AStarTest {
     }
 
     @Test
-    void TestDebug() {
+    void TestDebug() {/*
         MAPF_Instance testInstance = instanceCircle1;
         DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
         aStar = new AStar(testInstance, heuristicICTS);
@@ -118,6 +118,7 @@ public class AStarTest {
         breakPoint = 1;
         MDD nextNextSolution = aStar.continueSearching(depth + 2);
         breakPoint = 2;
+        */
     }
 
     @Test
@@ -130,7 +131,7 @@ public class AStarTest {
 
         /*  =   Set Instance Manager   =  */
         InstanceManager instanceManager = new InstanceManager(null, new InstanceBuilder_BGU());
-
+        /*
         MAPF_Instance instance = RunManagerSimpleExample.getInstanceFromPath(instanceManager, instancePath);
 
         MAPF_Instance testInstance = instance.getSubproblemFor(instance.agents.get(0));
@@ -143,6 +144,6 @@ public class AStarTest {
         MDD nextSolution = aStar.continueSearching(depth + 1);
         breakPoint = 1;
         MDD nextNextSolution = aStar.continueSearching(depth + 2);
-        breakPoint = 2;
+        breakPoint = 2;*/
     }
 }

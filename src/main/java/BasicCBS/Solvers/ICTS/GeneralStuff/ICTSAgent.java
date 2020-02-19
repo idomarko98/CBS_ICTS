@@ -28,6 +28,8 @@ public class ICTSAgent extends Agent {
         if(!mdds.containsKey(depth))
         {
             MDD curr = searcher.continueSearching(depth);
+            if(curr == null)
+                return null;
             mdds.put(depth, curr);
         }
         return mdds.get(depth);

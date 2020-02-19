@@ -164,135 +164,44 @@ public class BreadthFirstSearch_MergedMDDFactoryTest {
 
     @Test
     void Test1WayEachSameDepthDebug() {
-        aStars = new HashMap<>();
-        mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMapMultipleAgents;
-        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
-        for (Agent agent : testInstance.agents) {
-            MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
-            AStar aStar = new AStar(agentInstance, heuristicICTS);
-            aStars.put(agent, aStar);
-            I_Location start = testInstance.map.getMapCell(agent.source);
-            int depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
-            MDD solution = aStars.get(agent).continueSearching(depth);
-            mdds.put(agent, solution);
-        }
-        I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-
-        int breakPoint = 0;
+        TestInstanceDebug(instanceMapMultipleAgents);
     }
 
     @Test
     void Test1WayEachSameDepth3AgentsDebug() {
-        aStars = new HashMap<>();
-        mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMap3Agents;
-        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
-        for (Agent agent : testInstance.agents) {
-            MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
-            AStar aStar = new AStar(agentInstance, heuristicICTS);
-            aStars.put(agent, aStar);
-            I_Location start = testInstance.map.getMapCell(agent.source);
-            int depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
-            MDD solution = aStars.get(agent).continueSearching(depth);
-            mdds.put(agent, solution);
-        }
-        I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-
-        int breakPoint = 0;
+        TestInstanceDebug(instanceMap3Agents);
     }
 
     @Test
     void Test1WayEachDifferentDepthDebug() {
-        aStars = new HashMap<>();
-        mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMapMultipleAgentsDifferentPathSize;
-        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
-        for (Agent agent : testInstance.agents) {
-            MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
-            AStar aStar = new AStar(agentInstance, heuristicICTS);
-            aStars.put(agent, aStar);
-            I_Location start = testInstance.map.getMapCell(agent.source);
-            int depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
-            MDD solution = aStars.get(agent).continueSearching(depth);
-            mdds.put(agent, solution);
-        }
-        I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-
-        int breakPoint = 0;
+        TestInstanceDebug(instanceMapMultipleAgentsDifferentPathSize);
     }
 
     @Test
     void Test2WayForOneSameDepthDebug() {
-        aStars = new HashMap<>();
-        mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMapMultipleAgents2WayForOne;
-        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
-        for (Agent agent : testInstance.agents) {
-            MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
-            AStar aStar = new AStar(agentInstance, heuristicICTS);
-            aStars.put(agent, aStar);
-            I_Location start = testInstance.map.getMapCell(agent.source);
-            int depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
-            MDD solution = aStars.get(agent).continueSearching(depth);
-            mdds.put(agent, solution);
-        }
-        I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-
-        int breakPoint = 0;
+        TestInstanceDebug(instanceMapMultipleAgents2WayForOne);
     }
 
     @Test
     void Test2WayForOneDifferentDepthDebug() {
-        aStars = new HashMap<>();
-        mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMapMultipleAgents2WayForOneDifferentPathSize;
-        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
-        for (Agent agent : testInstance.agents) {
-            MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
-            AStar aStar = new AStar(agentInstance, heuristicICTS);
-            aStars.put(agent, aStar);
-            I_Location start = testInstance.map.getMapCell(agent.source);
-            int depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
-            MDD solution = aStars.get(agent).continueSearching(depth);
-            mdds.put(agent, solution);
-        }
-        I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-
-        int breakPoint = 0;
+        TestInstanceDebug(instanceMapMultipleAgents2WayForOneDifferentPathSize);
     }
 
     @Test
     void Test2WayForOneDifferentDepthOneCollidingDebug() {
-        aStars = new HashMap<>();
-        mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMapMultipleAgentsCollidingInCircle;
-        DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
-        for (Agent agent : testInstance.agents) {
-            MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
-            AStar aStar = new AStar(agentInstance, heuristicICTS);
-            aStars.put(agent, aStar);
-            I_Location start = testInstance.map.getMapCell(agent.source);
-            int depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
-            MDD solution = aStars.get(agent).continueSearching(depth);
-            mdds.put(agent, solution);
-        }
-        I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-
-        int breakPoint = 0;
+        TestInstanceDebug(instanceMapMultipleAgentsCollidingInCircle);
     }
 
     @Test
     void Test3AgentsDifferentPathSizeWithCollisionsDebug() {
+        TestInstanceDebug(instanceMap3AgentsDifferentPathSizeWithCollisions);
+    }
+
+    void TestInstanceDebug(MAPF_Instance instance){
+        /*
         aStars = new HashMap<>();
         mdds = new HashMap<>();
-        MAPF_Instance testInstance = instanceMap3AgentsDifferentPathSizeWithCollisions;
+        MAPF_Instance testInstance = instance;
         DistanceTableAStarHeuristicICTS heuristicICTS = new DistanceTableAStarHeuristicICTS(testInstance.agents, testInstance.map);
         for (Agent agent : testInstance.agents) {
             MAPF_Instance agentInstance = testInstance.getSubproblemFor(agent);
@@ -304,10 +213,10 @@ public class BreadthFirstSearch_MergedMDDFactoryTest {
             mdds.put(agent, solution);
         }
         I_MergedMDDFactory factory = new BreadthFirstSearch_MergedMDDFactory();
-        MergedMDD mergedMDD = factory.create(mdds);
-        Solution solution = mergedMDD.getSolution();
+        //MergedMDD mergedMDD = factory.create(mdds,);
+        //Solution solution = mergedMDD.getSolution();
 
-        int breakPoint = 0;
+        int breakPoint = 0;*/
     }
 }
 

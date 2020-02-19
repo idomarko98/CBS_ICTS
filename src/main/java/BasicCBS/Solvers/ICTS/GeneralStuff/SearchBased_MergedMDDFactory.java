@@ -1,6 +1,8 @@
 package BasicCBS.Solvers.ICTS.GeneralStuff;
 
 import BasicCBS.Instances.Agent;
+import BasicCBS.Solvers.A_Solver;
+import BasicCBS.Solvers.ICTS.HighLevel.ICTS_Solver;
 
 import java.util.*;
 
@@ -14,7 +16,7 @@ public abstract class SearchBased_MergedMDDFactory implements I_MergedMDDFactory
     protected abstract void addToClosed(MergedMDDNode node);
 
     @Override
-    public MergedMDD create(Map<Agent, MDD> agentMDDs) {
+    public MergedMDD create(Map<Agent, MDD> agentMDDs, ICTS_Solver highLevelSolver) {
         initializeSearch();
 
         MergedMDD mergedMDD = new MergedMDD();
@@ -36,7 +38,7 @@ public abstract class SearchBased_MergedMDDFactory implements I_MergedMDDFactory
         addToOpen(start);
 
         //Let the search begin!
-        while (!isOpenEmpty()) {
+        while (!isOpenEmpty() && !highLevelSolver.reachedTimeout()) {
             MergedMDDNode current = pollFromOpen();
             if (isGoal(current)) {
                 mergedMDD.setGoal(current);

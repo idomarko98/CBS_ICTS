@@ -4,6 +4,7 @@ import BasicCBS.Instances.Agent;
 import BasicCBS.Instances.MAPF_Instance;
 import BasicCBS.Instances.Maps.I_Location;
 import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
+import BasicCBS.Solvers.ICTS.HighLevel.ICTS_Solver;
 
 import java.util.*;
 
@@ -26,7 +27,8 @@ public class AStar extends A_LowLevelSearcher {
      * @param instance - we assume that it is a "subproblem" used the function "getSubproblemFor" in "MAPF_Instance" class
      * @param heuristic - the heuristics table that will enable us to get a more accurate heuristic
      */
-    public AStar(MAPF_Instance instance, DistanceTableAStarHeuristicICTS heuristic) {
+    public AStar(ICTS_Solver highLevelSearcher, MAPF_Instance instance, DistanceTableAStarHeuristicICTS heuristic) {
+        super(highLevelSearcher);
         this.instance = instance;
         openList = new PriorityQueue<>();
         contentOfOpen = new HashMap<>();
@@ -72,6 +74,8 @@ public class AStar extends A_LowLevelSearcher {
     public MDD continueSearching(int depthOfSolution) {
         Node goal = null;
         while(true){
+            if(highLevelSearcher.reachedTimeout())
+                return null;
             Node current = pollFromOpen();
             if(current.getF() > depthOfSolution)
             {

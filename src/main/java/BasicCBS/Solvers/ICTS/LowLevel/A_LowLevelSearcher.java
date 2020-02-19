@@ -1,14 +1,17 @@
 package BasicCBS.Solvers.ICTS.LowLevel;
 
 import BasicCBS.Solvers.ICTS.GeneralStuff.MDD;
+import BasicCBS.Solvers.ICTS.HighLevel.ICTS_Solver;
 
 public abstract class A_LowLevelSearcher {
     protected int expandedNodesNum;
     protected int generatedNodesNum;
+    protected ICTS_Solver highLevelSearcher;
 
-    public A_LowLevelSearcher() {
+    public A_LowLevelSearcher(ICTS_Solver highLevelSearcher) {
         expandedNodesNum = 0;
         generatedNodesNum = 0;
+        this.highLevelSearcher = highLevelSearcher;
     }
 
     public int getExpandedNodesNum() {

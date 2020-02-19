@@ -48,7 +48,7 @@ public class ICTS_Solver extends A_Solver {
             return null;
 
         boolean checkPairWiseMDDs = usePairWiseGoalTest && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
-        while (!openList.isEmpty()) {
+        while (!openList.isEmpty() && !checkTimeout()) {
             ICT_Node current = pollFromOpen();
             boolean pairFlag = true;
             if (checkPairWiseMDDs) {
@@ -59,26 +59,28 @@ public class ICTS_Solver extends A_Solver {
                 for (Agent a : instance.agents) {
                     ICTSAgent agent = (ICTSAgent) a;
                     MDD mdd = agent.getMDD(current.getCost(agent));
+                    if(mdd == null)
+                        return null;
                     mdds.put(agent, mdd);
                 }
-                MergedMDD mergedMDD = mergedMDDFactory.create(mdds);
+                MergedMDD mergedMDD = mergedMDDFactory.create(mdds, this);
                 if (mergedMDD != null) {
                     //We found the goal!
                     updateExpandedAndGeneratedNum(instance);
                     return mergedMDD.getSolution();
                 }
             }
-            expand(current);
+            if(!checkTimeout())
+                expand(current);
         }
 
-        //Not possible to get here!
-        try {
-            throw new Exception("ICTS does not stop until it finds a solution... not possible to get here!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //Got here because of timeout
         updateExpandedAndGeneratedNum(instance);
         return null;
+    }
+
+    public boolean reachedTimeout(){
+        return checkTimeout();
     }
 
     private void updateExpandedAndGeneratedNum(MAPF_Instance instance) {
@@ -122,11 +124,15 @@ public class ICTS_Solver extends A_Solver {
                 ICTSAgent agentI = (ICTSAgent) aI;
                 ICTSAgent agentJ = (ICTSAgent) aJ;
                 MDD mddI = agentI.getMDD(current.getCost(agentI));
+                if(mddI == null)
+                    return false;
                 MDD mddJ = agentJ.getMDD(current.getCost(agentJ));
+                if(mddJ == null)
+                    return false;
                 Map<Agent, MDD> pairwiseMap = new HashMap<>();
                 pairwiseMap.put(agentI, mddI);
                 pairwiseMap.put(agentJ, mddJ);
-                MergedMDD pairwiseMergedMDD = mergedMDDFactory.create(pairwiseMap);
+                MergedMDD pairwiseMergedMDD = mergedMDDFactory.create(pairwiseMap, this);
                 if (pairwiseMergedMDD == null) //couldn't find solution between 2 agents
                     return false;
             }
@@ -167,7 +173,7 @@ public class ICTS_Solver extends A_Solver {
                 return false;
             }
             MAPF_Instance agentInstance = instance.getSubproblemFor(agent);
-            A_LowLevelSearcher searcher = searcherFactory.createSearcher(agentInstance, heuristicICTS);
+            A_LowLevelSearcher searcher = searcherFactory.createSearcher(this, agentInstance, heuristicICTS);
             ((ICTSAgent) agent).setSearcher(searcher);
             I_Location start = instance.map.getMapCell(agent.source);
             Integer depth = heuristicICTS.getDistanceDictionaries().get(agent).get(start);
