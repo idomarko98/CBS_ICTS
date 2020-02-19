@@ -22,11 +22,16 @@ public class RunManagerSimpleExample extends A_RunManager {
     /*  = Set BasicCBS.Solvers =  */
     @Override
     void setSolvers() {
-        this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
+        //this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
         this.solvers.add(new CBS_Solver());
+        this.solvers.add(createNewICTSSolver(true));
+        this.solvers.add(createNewICTSSolver(false));
+    }
+
+    ICTS_Solver createNewICTSSolver(boolean usePairWiseGoalTest){
         I_MergedMDDFactory mergedMDDFactory = new DepthFirstSearch_MergedMDDFactory();
         //I_MergedMDDFactory mergedMDDFactory = new BreadthFirstSearch_MergedMDDFactory();
-        this.solvers.add(new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), mergedMDDFactory));
+        return new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), mergedMDDFactory, usePairWiseGoalTest);
     }
 
     /*  = Set Experiments =  */

@@ -21,14 +21,16 @@ public class ICTS_Solver extends A_Solver {
     private ICT_NodeComparator comparator;
     private I_LowLevelSearcherFactory searcherFactory;
     private I_MergedMDDFactory mergedMDDFactory;
+    private boolean usePairWiseGoalTest;
 
     private int expandedHighLevelNodesNum;
     private int generatedHighLevelNodesNum;
 
-    public ICTS_Solver(ICT_NodeComparator comparator, I_LowLevelSearcherFactory searcherFactory, I_MergedMDDFactory mergedMDDFactory) {
+    public ICTS_Solver(ICT_NodeComparator comparator, I_LowLevelSearcherFactory searcherFactory, I_MergedMDDFactory mergedMDDFactory, boolean usePairWiseGoalTest) {
         this.comparator = comparator;
         this.searcherFactory = searcherFactory;
         this.mergedMDDFactory = mergedMDDFactory;
+        this.usePairWiseGoalTest = usePairWiseGoalTest;
     }
 
     protected Queue<ICT_Node> createOpenList() {
@@ -45,7 +47,7 @@ public class ICTS_Solver extends A_Solver {
         if (!initializeSearch(instance))
             return null;
 
-        boolean checkPairWiseMDDs = false && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
+        boolean checkPairWiseMDDs = usePairWiseGoalTest && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty()) {
             ICT_Node current = pollFromOpen();
             boolean pairFlag = true;
@@ -96,10 +98,19 @@ public class ICTS_Solver extends A_Solver {
         super.instanceReport.putIntegerValue(InstanceReport.StandardFields.generatedNodes, this.generatedHighLevelNodesNum);
         super.instanceReport.putIntegerValue(InstanceReport.StandardFields.expandedNodes, this.expandedHighLevelNodesNum);
         super.instanceReport.putStringValue(InstanceReport.StandardFields.solver, getName());
+        if(solution != null){
+            super.instanceReport.putStringValue(InstanceReport.StandardFields.solutionCostFunction, solution.costFunctionName());//"SOC");
+            super.instanceReport.putIntegerValue(InstanceReport.StandardFields.solutionCost, solution.costFunction());//solution.sumIndividualCosts());
+        }
     }
 
-    private String getName() {
-        return "ICTS";
+    protected String getName(){
+        String pairWiseString = "_";
+        if(usePairWiseGoalTest)
+            pairWiseString += "pairwise";
+        else
+            pairWiseString += "no_pairwise";
+        return "ICTS_Solver" + pairWiseString;
     }
 
     private boolean pairWiseGoalTest(MAPF_Instance instance, ICT_Node current) {

@@ -199,7 +199,7 @@ public class ICTS_SolverTest {
 
     void RunTest(MAPF_Instance instance){
         MAPF_Instance testInstance = instance;
-        ICTS_Solver solver = new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), new BreadthFirstSearch_MergedMDDFactory());
+        ICTS_Solver solver = new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), new BreadthFirstSearch_MergedMDDFactory(), true);
         Solution solution = solver.runAlgorithm(testInstance, new RunParameters());
 
         int breakPoint = 0;

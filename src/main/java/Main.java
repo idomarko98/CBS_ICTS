@@ -83,7 +83,7 @@ public class Main {
         MAPF_Instance instance = RunManagerSimpleExample.getInstanceFromPath(instanceManager, instancePath);
         MAPF_Instance ictsInstance = ICTS_MAPFInstance.Copy(instance);
         // Solve
-        I_Solver solver = new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), new BreadthFirstSearch_MergedMDDFactory());
+        I_Solver solver = new ICTS_Solver(new ICT_NodeMakespanComparator(), new AStarFactory(), new BreadthFirstSearch_MergedMDDFactory(), true);
         //CBS_Solver solver = new CBS_Solver();
         RunParameters runParameters = new RunParameters();
         Solution solution = solver.solve(ictsInstance, runParameters);
