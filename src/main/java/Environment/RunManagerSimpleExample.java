@@ -37,7 +37,9 @@ public class RunManagerSimpleExample extends A_RunManager {
     /*  = Set Experiments =  */
     @Override
     void setExperiments() {
-        addExperiment_ourExperiment();
+        addExperiment_brc202d();
+        addExperiment_den520d();
+        addExperiment_lak303d();
         /*
         addExperiment_16_7();
         addExperimentMovingAI_8room();
@@ -47,20 +49,32 @@ public class RunManagerSimpleExample extends A_RunManager {
 
     /* = Experiments =  */
 
-    private void addExperiment_ourExperiment(){
+    private void addExperiment_brc202d(){
+        addExperiment("brc202d", new int[]{5,10,15,20,25});
+    }
+
+    private void addExperiment_den520d(){
+        addExperiment("den520d", new int[]{5,10,15,20,25,30,35,40,45,50,55});
+    }
+
+    private void addExperiment_lak303d(){
+        addExperiment("lak303d", new int[]{5,10,15,20,25,30,35,40});
+    }
+
+    private void addExperiment(String name, int[] agentNums){
         /*  =   Set Path   =*/
         String path = IO_Manager.buildPath( new String[]{   IO_Manager.resources_Directory,
-                "Instances\\\\Experiment_Instances"});
+                "Instances\\\\Experiments\\\\" + name});
 
         /*  =   Set Properties   =  */
-        InstanceProperties properties = new InstanceProperties(null, -1, new int[]{2});
+        InstanceProperties properties = new InstanceProperties(null, -1, agentNums);
 
 
         /*  =   Set Instance Manager   =  */
         InstanceManager instanceManager = new InstanceManager(path, new InstanceBuilder_MovingAI(), properties);
 
         /*  =   Add new experiment   =  */
-        Experiment gridExperiment = new Experiment("Experiment", instanceManager);
+        Experiment gridExperiment = new Experiment("Experiment_" + name, instanceManager);
         this.experiments.add(gridExperiment);
     }
 
