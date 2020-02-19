@@ -55,6 +55,7 @@ public class AStar extends A_LowLevelSearcher {
             inClosed.addParents(node.getParents());
         }
         else{
+            generatedNodesNum++;
             openList.add(node);
             contentOfOpen.put(node, node);
         }
@@ -77,6 +78,7 @@ public class AStar extends A_LowLevelSearcher {
             if(highLevelSearcher.reachedTimeout())
                 return null;
             Node current = pollFromOpen();
+            expandedNodesNum++;
             if(current.getF() > depthOfSolution)
             {
                 addToOpen(current);
@@ -112,10 +114,8 @@ public class AStar extends A_LowLevelSearcher {
     }
 
     private void expand(Node node){
-        expandedNodesNum++;
         List<I_Location> neighborLocations = node.getNeighborLocations();
         for (I_Location location : neighborLocations) {
-            generatedNodesNum++;
             Node neighbor = new Node(agent, location, node.getG() + 1, heuristic);
             neighbor.addParent(node);
             addToOpen(neighbor);

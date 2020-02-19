@@ -50,6 +50,7 @@ public class ICTS_Solver extends A_Solver {
         boolean checkPairWiseMDDs = usePairWiseGoalTest && instance.agents.size() > 2; // TODO: 2/18/2020 add this to the RunParameters so we will have control over it
         while (!openList.isEmpty() && !checkTimeout()) {
             ICT_Node current = pollFromOpen();
+            expandedHighLevelNodesNum++;
             boolean pairFlag = true;
             if (checkPairWiseMDDs) {
                 pairFlag = pairWiseGoalTest(instance, current);
@@ -142,10 +143,8 @@ public class ICTS_Solver extends A_Solver {
 
     private void expand(ICT_Node current) {
         List<ICT_Node> children = current.getChildren();
-        expandedHighLevelNodesNum++;
         for (ICT_Node child : children) {
             addToOpen(child);
-            generatedHighLevelNodesNum++;
         }
         addToClosed(current);
     }
@@ -189,7 +188,6 @@ public class ICTS_Solver extends A_Solver {
             startCosts.put(agent, depth);
         }
         ICT_Node startNode = new ICT_Node(startCosts);
-        generatedHighLevelNodesNum++;
         addToOpen(startNode);
         return true;
     }
@@ -202,6 +200,7 @@ public class ICTS_Solver extends A_Solver {
 
     private void addToOpen(ICT_Node node) {
         if (!contentOfOpen.contains(node) && !closedList.contains(node)) {
+            generatedHighLevelNodesNum++;
             openList.add(node);
             contentOfOpen.add(node);
         }
