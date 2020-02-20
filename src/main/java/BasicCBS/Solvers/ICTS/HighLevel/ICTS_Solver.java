@@ -64,11 +64,11 @@ public class ICTS_Solver extends A_Solver {
                         return null;
                     mdds.put(agent, mdd);
                 }
-                MergedMDD mergedMDD = mergedMDDFactory.create(mdds, this);
-                if (mergedMDD != null) {
+                Solution mergedMDDSolution = mergedMDDFactory.create(mdds, this);
+                if (mergedMDDSolution != null) {
                     //We found the goal!
                     updateExpandedAndGeneratedNum(instance);
-                    return mergedMDD.getSolution();
+                    return mergedMDDSolution;
                 }
             }
             if(!checkTimeout())
@@ -133,8 +133,8 @@ public class ICTS_Solver extends A_Solver {
                 Map<Agent, MDD> pairwiseMap = new HashMap<>();
                 pairwiseMap.put(agentI, mddI);
                 pairwiseMap.put(agentJ, mddJ);
-                MergedMDD pairwiseMergedMDD = mergedMDDFactory.create(pairwiseMap, this);
-                if (pairwiseMergedMDD == null) //couldn't find solution between 2 agents
+                Solution pairwiseMergedMDDSolution = mergedMDDFactory.create(pairwiseMap, this);
+                if (pairwiseMergedMDDSolution == null) //couldn't find solution between 2 agents
                     return false;
             }
         }

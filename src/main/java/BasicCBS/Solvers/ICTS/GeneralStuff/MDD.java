@@ -2,11 +2,11 @@ package BasicCBS.Solvers.ICTS.GeneralStuff;
 
 import BasicCBS.Instances.Agent;
 import BasicCBS.Solvers.ICTS.LowLevel.Node;
+import BasicCBS.Solvers.Move;
+import BasicCBS.Solvers.SingleAgentPlan;
+import BasicCBS.Solvers.Solution;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class MDD {
     private MDDNode start;
@@ -57,6 +57,26 @@ public class MDD {
 
     public MDDNode getGoal() {
         return goal;
+    }
+
+    public Solution getPossibleSolution() {
+        Solution solution = new Solution();
+        List<Move> moves = new ArrayList<>();
+
+        MDDNode current = start;
+        while (!current.equals(goal)) {
+            MDDNode next = current.getNeighbors().get(0); //It doesn't matter which son it was, we take a single path.
+
+            Move move = new Move(current.getValue().getAgent(), next.getValue().getG(), current.getValue().getLocation(), next.getValue().getLocation());
+            moves.add(move); //insert the move to the moves
+
+            current = next;
+        }
+
+        SingleAgentPlan plan = new SingleAgentPlan(start.getValue().getAgent(), moves);
+        solution.putPlan(plan);
+
+        return solution;
     }
 
     public int getDepth() {
