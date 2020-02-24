@@ -23,10 +23,10 @@ public class RunManagerSimpleExample extends A_RunManager {
     /*  = Set BasicCBS.Solvers =  */
     @Override
     void setSolvers() {
-        //this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
+        this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
         this.solvers.add(new CBS_Solver());
         this.solvers.add(createNewICTSSolver(true));
-        this.solvers.add(createNewICTSSolver(false));
+        //this.solvers.add(createNewICTSSolver(false));
     }
 
     ICTS_Solver createNewICTSSolver(boolean usePairWiseGoalTest){
@@ -50,17 +50,18 @@ public class RunManagerSimpleExample extends A_RunManager {
 
 
     /* = Experiments =  */
+    private int [] agentNumberExperiments = new int[]{2,3,4,5,6,7,8,9,10};
 
     private void addExperiment_brc202d(){
-        addExperiment("brc202d_small", new int[]{5,10/*,15,20,25*/});
+        addExperiment("brc202d_small", agentNumberExperiments/*new int[]{5,10,15,20,25}*/);
     }
 
     private void addExperiment_den520d(){
-        addExperiment("den520d_small", new int[]{5,10/*,15,20,25,30,35,40,45,50,55*/});
+        addExperiment("den520d_small", agentNumberExperiments/*new int[]{5,10,15,20,25,30,35,40,45,50,55}*/);
     }
 
     private void addExperiment_lak303d(){
-        addExperiment("lak303d_small", new int[]{5,10/*,15,20,25,30,35,40*/});
+        addExperiment("lak303d_small", agentNumberExperiments/*new int[]{5,10,15,20,25,30,35,40}*/);
     }
 
     private void addExperiment(String name, int[] agentNums){
