@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat;
 public class Main {
 
     // where to put generated reports. The default is a new folder called CBS_Results, under the user's home directory.
-    public static final String resultsOutputDir = "C:\\Users\\User\\Desktop\\second_degree\\קורסים\\סמסטר א\\שיטות חיפוש בבינה מלאכותית\\Project\\Results";
+    public static final String resultsOutputDir = "D:\\Rotem\\Search_Course\\Project_Results";
     //public static final String resultsOutputDir = IO_Manager.buildPath(new String[]{System.getProperty("user.home"), "CBS_Results"});
 //    public static final String resultsOutputDir = IO_Manager.buildPath(new String[]{   IO_Manager.testResources_Directory +
 //                                                                                        "\\Reports default directory"});
