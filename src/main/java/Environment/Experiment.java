@@ -76,9 +76,9 @@ public  class Experiment {
         System.out.println("Elapsed time (ms): " + elapsedTime);
       }
 
+      Main.outputResults();
+
     }
-
-
   }
 
 
