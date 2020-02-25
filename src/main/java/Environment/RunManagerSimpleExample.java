@@ -25,9 +25,9 @@ public class RunManagerSimpleExample extends A_RunManager {
     @Override
     void setSolvers() {
         //this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
-        this.solvers.add(new CBS_Solver());
+        //this.solvers.add(new CBS_Solver());
         this.solvers.add(createNewICTSSolver(true));
-        this.solvers.add(createNewICTSSolver(false));
+        //this.solvers.add(createNewICTSSolver(false));
     }
 
     ICTS_Solver createNewICTSSolver(boolean usePairWiseGoalTest){
@@ -40,9 +40,9 @@ public class RunManagerSimpleExample extends A_RunManager {
     /*  = Set Experiments =  */
     @Override
     void setExperiments() {
-        addExperiment_brc202d();
-        addExperiment_den520d();
-        addExperiment_lak303d();
+        //addExperiment_brc202d();//done with icts
+        //addExperiment_den520d();//done with icts
+        //addExperiment_lak303d();//done with icts
         /*
         addExperiment_16_7();
         addExperimentMovingAI_8room();
