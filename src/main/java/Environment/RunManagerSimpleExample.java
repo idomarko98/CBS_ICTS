@@ -25,9 +25,9 @@ public class RunManagerSimpleExample extends A_RunManager {
     @Override
     void setSolvers() {
         //this.solvers.add(new PrioritisedPlanning_Solver(new SingleAgentAStar_Solver()));
-        //this.solvers.add(new CBS_Solver());
+        this.solvers.add(new CBS_Solver());
         this.solvers.add(createNewICTSSolver(true));
-        //this.solvers.add(createNewICTSSolver(false));
+        this.solvers.add(createNewICTSSolver(false));
     }
 
     ICTS_Solver createNewICTSSolver(boolean usePairWiseGoalTest){
