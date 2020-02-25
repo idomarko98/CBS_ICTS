@@ -15,11 +15,12 @@ public class AStar extends A_LowLevelSearcher {
      * The key will not be updated, although, the value will be the last version of this node.
      * Will contain everything in the open list, so we could modify them (add to their parents) while they are in the Priority Queue.
      */
-    private Map<Node, Node> contentOfOpen;
-    private Map<Node, Node> closeList;
+    protected Map<Node, Node> contentOfOpen;
+    protected Map<Node, Node> closeList;
     private MAPF_Instance instance;
     private Agent agent;
     private DistanceTableAStarHeuristicICTS heuristic;
+    protected int maxDepthOfSolution;
 
     /**
      * Constructor for the AStar searcher
@@ -30,13 +31,19 @@ public class AStar extends A_LowLevelSearcher {
     public AStar(ICTS_Solver highLevelSearcher, MAPF_Instance instance, DistanceTableAStarHeuristicICTS heuristic) {
         super(highLevelSearcher);
         this.instance = instance;
-        openList = new PriorityQueue<>();
+        /*
+        initOpenList();
         contentOfOpen = new HashMap<>();
         closeList = new HashMap<>();
+         */
         agent = instance.agents.get(0); //only one agent in the instance
         this.heuristic = heuristic;
 
-        initializeSearch();
+        //initializeSearch();
+    }
+
+    protected void initOpenList(){
+        openList = new PriorityQueue<>();
     }
 
     private void initializeSearch() {
@@ -44,7 +51,7 @@ public class AStar extends A_LowLevelSearcher {
         addToOpen(start);
     }
 
-    private void addToOpen(Node node){
+    protected void addToOpen(Node node){
         if(contentOfOpen.containsKey(node)){
             //Do not add this node twice to the open list, just add it's parents to the already "inOpen" node.
             Node inOpen = contentOfOpen.get(node);
@@ -61,7 +68,7 @@ public class AStar extends A_LowLevelSearcher {
         }
     }
 
-    private Node pollFromOpen(){
+    protected Node pollFromOpen(){
         Node next = openList.poll();
         contentOfOpen.remove(next);
         return next;
@@ -73,8 +80,14 @@ public class AStar extends A_LowLevelSearcher {
 
     @Override
     public MDD continueSearching(int depthOfSolution) {
+        this.maxDepthOfSolution = depthOfSolution;
+        initOpenList();
+        contentOfOpen = new HashMap<>();
+        closeList = new HashMap<>();
+        initializeSearch();
+
         Node goal = null;
-        while(true){
+        while(!isOpenEmpty()){
             if(highLevelSearcher.reachedTimeout())
                 return null;
             Node current = pollFromOpen();
@@ -99,18 +112,32 @@ public class AStar extends A_LowLevelSearcher {
                         }
                     }
                 }
+                /*  it is logical, because of the DFS who extends AStar
                 else{
+
                     try {
                         throw new Exception("It is not logical that we will receive a different goal in a different depth");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+                */
             }
             // Don't do else here, because we want to add the sons of current to the open list for later
             expand(current);
         }
+        contentOfOpen.clear();
+        closeList.clear();
+        clearOpenList();
         return new MDD(goal);
+    }
+
+    protected void clearOpenList() {
+        openList.clear();
+    }
+
+    protected boolean isOpenEmpty() {
+        return openList.isEmpty();
     }
 
     private void expand(Node node){

@@ -28,6 +28,7 @@ public abstract class A_RunManager {
 
             for ( I_Solver solver : solvers ) {
                 experiment.runExperiment(solver);
+                System.gc();
             }
 
             System.out.println(experiment.experimentName + " - Done!");
